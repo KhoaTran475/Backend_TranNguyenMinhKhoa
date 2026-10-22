@@ -1,0 +1,212 @@
+# Replace placeholders with your own configured email, password, OTP, IDs and tokens.
+# Replace placeholders with your own configured email, password, OTP, IDs and tokens.
+@baseUrl = https://localhost:7119/api
+@username = admin.demo
+@password = REPLACE_WITH_CONFIGURED_DEMO_PASSWORD
+@challengeId = 00000000-0000-0000-0000-000000000000
+@otp = 000000
+@adminToken = REPLACE_AFTER_ADMIN_OTP
+@lecturerToken = REPLACE_AFTER_LECTURER_OTP
+@studentToken = REPLACE_AFTER_STUDENT_OTP
+@classId = 1
+@sessionId = 1
+@studentId = 1
+@attendanceId = 1
+@lecturerId = 1
+@userId = REPLACE_FROM_USERS
+@qrToken = REPLACE_TOKEN_FIELD_PARSED_FROM_QR_PAYLOAD
+
+### Request 3 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{"username":"{{username}}","password":"{{password}}"}
+
+### Request 4 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/auth/verify-login-otp
+Content-Type: application/json
+
+{"challengeId":"{{challengeId}}","otp":"{{otp}}"}
+
+### Request 5 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/auth/resend-otp
+Content-Type: application/json
+
+{"challengeId":"{{challengeId}}"}
+
+### Request 6 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{studentToken}}
+
+### Admin dashboard
+GET {{baseUrl}}/dashboard
+Authorization: Bearer {{adminToken}}
+
+### Request 7 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/users?search=demo&page=1&pageSize=20
+Authorization: Bearer {{adminToken}}
+
+### Request 8 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/students?search=SV&page=1&pageSize=20
+Authorization: Bearer {{adminToken}}
+
+### Request 9 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/students
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{"studentCode":"SV004","fullName":"Sinh viên demo mới","email":"REPLACE_WITH_OWN_EMAIL"}
+
+### Request 10 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{"studentCode":"SV004","fullName":"Sinh viên demo mới","email":"REPLACE_WITH_OWN_EMAIL","username":"student4.demo","password":"{{password}}"}
+
+### Request 11 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/auth/verify-email
+Content-Type: application/json
+
+{"challengeId":"{{challengeId}}","otp":"{{otp}}"}
+
+### Request 12 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/classes/{{classId}}/students
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{"studentId":{{studentId}}}
+
+### Request 13 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/classes?page=1&pageSize=20
+Authorization: Bearer {{adminToken}}
+
+###
+GET {{baseUrl}}/classes/{{classId}}/students?page=1&pageSize=20
+Authorization: Bearer {{lecturerToken}}
+
+###
+GET {{baseUrl}}/subjects
+Authorization: Bearer {{adminToken}}
+
+###
+GET {{baseUrl}}/rooms
+Authorization: Bearer {{adminToken}}
+
+### Request 14 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{"username":"lecturer.demo","password":"{{password}}"}
+
+### Request 15 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/me/classes
+Authorization: Bearer {{lecturerToken}}
+
+### Request 16 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/classes/{{classId}}/sessions
+Authorization: Bearer {{lecturerToken}}
+
+### Request 17 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/classes/{{classId}}/sessions
+Authorization: Bearer {{lecturerToken}}
+Content-Type: application/json
+
+{"roomId":1,"startAtUtc":"2026-10-22T02:00:00Z","endAtUtc":"2026-10-22T06:00:00Z","attendanceClosesAtUtc":"2026-10-22T05:00:00Z","lateAfterMinutes":15}
+
+### Request 18 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/sessions/{{sessionId}}/open
+Authorization: Bearer {{lecturerToken}}
+
+### Request 19 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/sessions/{{sessionId}}/qr
+Authorization: Bearer {{lecturerToken}}
+
+### Request 20 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{"username":"student1.demo","password":"{{password}}"}
+
+### Request 21 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/me/sessions?page=1&pageSize=20
+Authorization: Bearer {{studentToken}}
+
+### Request 22 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/attendance/check-in
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{"sessionId":{{sessionId}},"qrToken":"{{qrToken}}","latitude":10.762622,"longitude":106.660172,"accuracyMeters":10}
+
+### Request 23 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/attendance/check-in
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{"sessionId":{{sessionId}},"qrToken":"{{qrToken}}","latitude":0,"longitude":0,"accuracyMeters":10}
+
+### Request 24 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/attendance/check-in
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{"sessionId":{{sessionId}},"qrToken":"{{qrToken}}","latitude":10.762622,"longitude":106.660172,"accuracyMeters":70}
+
+### Request 25 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/sessions/{{sessionId}}/attendance?page=1&pageSize=20
+Authorization: Bearer {{lecturerToken}}
+
+### Request 26 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/sessions/{{sessionId}}/close
+Authorization: Bearer {{lecturerToken}}
+
+### Request 27 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/sessions/{{sessionId}}/open
+Authorization: Bearer {{lecturerToken}}
+
+### Request 28 (see README/API_CONTRACT for the demo sequence)
+PUT {{baseUrl}}/attendance/{{attendanceId}}
+Authorization: Bearer {{lecturerToken}}
+Content-Type: application/json
+
+{"status":"Excused","reason":"Đã nhận giấy xin phép của sinh viên."}
+
+### Request 29 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/attendance/{{attendanceId}}/changes?page=1&pageSize=20
+Authorization: Bearer {{lecturerToken}}
+
+### Request 30 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/me/attendance?page=1&pageSize=20
+Authorization: Bearer {{studentToken}}
+
+###
+GET {{baseUrl}}/dashboard
+Authorization: Bearer {{studentToken}}
+
+### Request 31 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/users
+Authorization: Bearer {{studentToken}}
+
+### Request 32 (see README/API_CONTRACT for the demo sequence)
+GET {{baseUrl}}/auth/me
+
+### Request 33 (see README/API_CONTRACT for the demo sequence)
+POST {{baseUrl}}/users/lecturer
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{"lecturerId":{{lecturerId}},"username":"lecturer2.demo","password":"{{password}}"}
+
+### Request 34 (see README/API_CONTRACT for the demo sequence)
+PATCH {{baseUrl}}/users/{{userId}}/active
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{"isActive":false}
+
+### Request 35 (see README/API_CONTRACT for the demo sequence)
+PATCH {{baseUrl}}/users/{{userId}}/active
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{"isActive":true}

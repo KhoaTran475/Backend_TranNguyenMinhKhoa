@@ -1,0 +1,7 @@
+.vs/
+**/bin/
+**/obj/
+**/*.user
+.env
+**/appsettings.Local.json
+artifacts/
